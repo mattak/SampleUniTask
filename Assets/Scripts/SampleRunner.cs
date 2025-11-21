@@ -15,10 +15,10 @@ public class SampleRunner : MonoBehaviour
     ///
     /// Task
     /// - スケジューラ: SynchronizationContext (UnitySynchronizationContext)
-    ///     - 別スレッド実行: Task.Run() 
+    /// - 別スレッド実行: Task.Run() 
     /// - デフォルト実行場所: 別スレッド
     /// - Forget: なし (自作必要)
-    ///     - 投げっぱなし: バグる
+    /// - 投げっぱなし: バグる
     /// - GC: 頻発
     /// - メモリ: スレッド確保で頻発
     ///
@@ -26,7 +26,7 @@ public class SampleRunner : MonoBehaviour
     /// - スケジューラ: UnityEngine.PlayerLoop
     /// - 別スレッド実行: UniTask.RunOnThreadPool() 
     /// - デフォルト実行場所: PlayerLoop (メインスレッド)
-    ///     - Forget: あり 
+    /// - Forget: あり 
     /// - 投げっぱなし: UnityEngine.Debug.LogExceptionに通知
     /// - GC: 最小限
     /// - メモリ: 同一スレッドで最小
