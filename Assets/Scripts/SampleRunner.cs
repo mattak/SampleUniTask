@@ -6,13 +6,34 @@ using UnityEngine;
 
 public class SampleRunner : MonoBehaviour
 {
+    /// <summary>
+    /// Task,UniTaskの基本的な違い
+    ///
+    /// Task
+    /// - スケジューラ: SynchronizationContext (UnitySynchronizationContext)
+    ///     - 別スレッド実行: Task.Run() 
+    /// - デフォルト実行場所: 別スレッド
+    /// - Forget: なし (自作必要)
+    ///     - 投げっぱなし: バグる
+    /// - GC: 頻発
+    /// - メモリ: スレッド確保で頻発
+    ///
+    /// UniTask
+    /// - スケジューラ: UnityEngine.PlayerLoop
+    /// - 別スレッド実行: UniTask.RunOnThreadPool() 
+    /// - デフォルト実行場所: PlayerLoop (メインスレッド)
+    ///     - Forget: あり 
+    /// - 投げっぱなし: UnityEngine.Debug.LogExceptionに通知
+    /// - GC: 最小限
+    /// - メモリ: 同一スレッドで最小
+    //// </summary>
     private void Start()
     {
         // ちゃんとキャッチされ、例外出力もなされる
         RunUniTask().Forget();
         RunUniTask().Forget(Debug.LogException);
         
-        // 何にも例外でない (async void の問題点)
+        // 何にも例外でない. 観測できない (async void の問題点)
         RunTask();
         
         // 例外は出る
@@ -20,7 +41,7 @@ public class SampleRunner : MonoBehaviour
         RunTask().ForgetOK1();
         RunTask().ForgetOK2();
         
-        // await終了後に個別のThreadPool内部のThreadに移動する
+        // Taskはawait終了後に個別のThreadPool内部のThreadに移動する (ややこしい)
         Task.Run(async () =>
         {
             // ThreadID: 1220 (別スレッド1)
@@ -35,7 +56,7 @@ public class SampleRunner : MonoBehaviour
             Debug.Log("Task:After2 await: " + Thread.CurrentThread.ManagedThreadId);
         });
 
-        // await終了後にmainThreadに移動する
+        // UniTaskはawait終了後にmainThreadに移動する (ルールがシンプル)
         UniTask.RunOnThreadPool(async () =>
         {
             // ThreadID: 1234 (別スレッド1)
